@@ -7,8 +7,10 @@ A powerful Statamic addon that allows you to select Bible verses in the Control 
 - **Repeater-Style Fieldtype**: Add multiple Bible verses to any entry
 - **66 Books Supported**: All books from Genesis to Revelation
 - **Multiple Versions**: NKJV, KJV, ESV, NIV, AMP, WEB
-- **Reference Parsing**: Paste "John 3:16-17 NKJV" to auto-populate fields
+- **Reference Parsing**: Paste references to auto-populate (e.g., "John 3:16-17 NKJV" or "Psalm 46-47")
+- **Chapter Ranges**: Fetch multiple chapters at once (e.g., Psalm 46-47)
 - **Verse Ranges**: Select single verses or ranges (e.g., John 1:1-5)
+- **Whole Chapters**: Fetch entire chapters without specifying verses
 - **API Integration**: Fetches verses from bolls.life and fallback APIs
 - **Offline Mode**: Download complete Bible versions as JSON
 - **Smart Caching**: Caches API responses for 30 days
@@ -108,7 +110,10 @@ Get a free API key at [https://scripture.api.bible](https://scripture.api.bible)
 
 #### Method 1: Quick Add with Reference Parser
 
-1. Paste a reference in the "Quick Add" field: `John 3:16-17 NKJV`
+1. Paste a reference in the "Quick Add" field:
+   - `John 3:16-17 NKJV` - Verse range with version
+   - `Psalm 46-47` - Chapter range
+   - `John 3:16` - Single verse
 2. Click "Parse & Add"
 3. The verse is automatically fetched and added
 
@@ -116,7 +121,11 @@ Get a free API key at [https://scripture.api.bible](https://scripture.api.bible)
 
 1. Click "Add Verse"
 2. Select book from grouped dropdown (Old/New Testament)
-3. Enter chapter, start verse, and optional end verse
+3. Choose your reference type:
+   - **Single Verse**: Enter chapter and start verse
+   - **Verse Range**: Enter chapter, start verse, and end verse
+   - **Whole Chapter**: Enter chapter only (leave verses empty)
+   - **Chapter Range**: Enter chapter and end chapter (e.g., 46 to 47)
 4. Select Bible version
 5. Click "Fetch Verse"
 6. Preview appears showing the fetched text
@@ -133,7 +142,9 @@ Click the "Refresh All" button to refetch all verses (useful after updating vers
     <h3>{{ reference }} ({{ version_name }})</h3>
     <p>{{ text }}</p>
 
-    {{ if is_range }}
+    {{ if is_chapter_range }}
+      <small>This is a chapter range ({{ chapter }}-{{ end_chapter }})</small>
+    {{ elseif is_verse_range }}
       <small>This is a verse range</small>
     {{ /if }}
   </div>
@@ -142,19 +153,22 @@ Click the "Refresh All" button to refetch all verses (useful after updating vers
 
 #### Available Fields
 
-- `reference` - Formatted reference (e.g., "John 3:16-17")
-- `book` - Book name (e.g., "John")
-- `chapter` - Chapter number
-- `start_verse` - Starting verse number
-- `end_verse` - Ending verse number
+- `reference` - Formatted reference (e.g., "John 3:16-17" or "Psalm 46-47")
+- `book` - Book name (e.g., "John", "Psalm")
+- `chapter` - Starting chapter number
+- `end_chapter` - Ending chapter number (for chapter ranges)
+- `start_verse` - Starting verse number (null for chapter ranges)
+- `end_verse` - Ending verse number (null for single verses)
 - `version` - Version code (e.g., "NKJV")
 - `version_name` - Full version name (e.g., "New King James Version")
 - `text` - Complete verse text with verse numbers
 - `text_without_numbers` - Text without leading verse numbers
-- `is_range` - Boolean indicating if this is a verse range
+- `is_range` - Boolean indicating if this is any type of range
+- `is_chapter_range` - Boolean indicating if this is a chapter range
+- `is_verse_range` - Boolean indicating if this is a verse range
 - `has_text` - Boolean indicating if text was successfully fetched
 - `fetched_at` - Timestamp when verse was fetched
-- `api_source` - Which API was used (e.g., "bolls")
+- `api_source` - Which API was used (e.g., "bolls", "combined")
 
 ## Artisan Commands
 

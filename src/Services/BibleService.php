@@ -19,23 +19,35 @@ class BibleService
     }
 
     /**
-     * Fetch a single verse or verse range
+     * Fetch a single verse, verse range, whole chapter, or chapter range
      *
-     * @param string $book Book name (e.g., "John", "1 Samuel")
-     * @param int $chapter Chapter number
-     * @param int $startVerse Start verse number
+     * @param string $book Book name (e.g., "John", "1 Samuel", "Psalm")
+     * @param int $chapter Starting chapter number
+     * @param int|null $startVerse Start verse number (null for whole chapter)
      * @param int|null $endVerse End verse number (null for single verse)
      * @param string $version Bible version (e.g., "NKJV", "KJV")
+     * @param int|null $endChapter End chapter number for chapter ranges (e.g., Psalm 46-47)
      * @return array{success: bool, data: array|null, error: string|null}
      */
     public function fetchVerse(
         string $book,
         int $chapter,
-        int $startVerse,
+        ?int $startVerse,
         ?int $endVerse,
-        string $version
+        string $version,
+        ?int $endChapter = null
     ): array {
-        // Validate inputs
+        // Handle chapter ranges specially (e.g., Psalm 46-47)
+        if ($endChapter !== null && $endChapter > $chapter) {
+            return $this->fetchChapterRange($book, $chapter, $endChapter, $version);
+        }
+
+        // For whole chapter requests (no specific verses), fetch the entire chapter
+        if ($startVerse === null) {
+            return $this->fetchWholeChapter($book, $chapter, $version);
+        }
+
+        // Validate inputs for verse-level requests
         $validation = $this->validate($book, $chapter, $startVerse, $endVerse);
         if (!$validation['valid']) {
             return [
@@ -84,6 +96,72 @@ class BibleService
         }
 
         return $result;
+    }
+
+    /**
+     * Fetch a range of chapters (e.g., Psalm 46-47)
+     */
+    protected function fetchChapterRange(
+        string $book,
+        int $startChapter,
+        int $endChapter,
+        string $version
+    ): array {
+        $chapters = [];
+        $combinedText = '';
+
+        for ($chapterNum = $startChapter; $chapterNum <= $endChapter; $chapterNum++) {
+            $result = $this->fetchWholeChapter($book, $chapterNum, $version);
+
+            if (!$result['success']) {
+                return $result; // Return error if any chapter fails
+            }
+
+            $chapters[] = $result['data'];
+            $combinedText .= ($combinedText ? "\n\n" : '') . $result['data']['text'];
+        }
+
+        $reference = "{$book} {$startChapter}-{$endChapter}";
+
+        return [
+            'success' => true,
+            'data' => [
+                'book' => $book,
+                'chapter' => $startChapter,
+                'end_chapter' => $endChapter,
+                'start_verse' => null,
+                'end_verse' => null,
+                'version' => $version,
+                'text' => $combinedText,
+                'reference' => $reference,
+                'fetched_at' => now()->toISOString(),
+                'api_source' => 'combined',
+            ],
+            'error' => null,
+        ];
+    }
+
+    /**
+     * Fetch an entire chapter without specifying verses
+     */
+    protected function fetchWholeChapter(
+        string $book,
+        int $chapter,
+        string $version
+    ): array {
+        // Get the number of verses in this chapter
+        $verseCount = BibleMetadata::getVerseCount($book, $chapter);
+
+        if ($verseCount === null) {
+            return [
+                'success' => false,
+                'data' => null,
+                'error' => "Chapter {$chapter} does not exist in {$book}",
+            ];
+        }
+
+        // Fetch from verse 1 to the last verse
+        return $this->fetchVerse($book, $chapter, 1, $verseCount, $version, null);
     }
 
     /**
@@ -536,16 +614,46 @@ class BibleService
 
     /**
      * Parse a Bible reference string
-     * Supports formats: "John 3:16", "John 3:16-17", "John 3:16-17 NKJV"
+     * Supports formats:
+     * - "John 3:16" (single verse)
+     * - "John 3:16-17" (verse range)
+     * - "Psalm 46-47" (chapter range)
+     * - "John 3:16-17 NKJV" (with version)
      */
     public function parseReference(string $reference): ?array
     {
         $reference = trim($reference);
 
-        // Pattern: Book Chapter:Verse-Verse Version
-        $pattern = '/^([\d\s\w]+?)\s+(\d+):(\d+)(?:-(\d+))?\s*([A-Z]+)?$/i';
+        // Pattern 1: Chapter range - "Psalm 46-47" or "Psalm 46-47 NKJV"
+        $chapterRangePattern = '/^([\d\s\w]+?)\s+(\d+)-(\d+)\s*([A-Z]+)?$/i';
 
-        if (preg_match($pattern, $reference, $matches)) {
+        if (preg_match($chapterRangePattern, $reference, $matches)) {
+            $book = trim($matches[1]);
+            $chapter = (int) $matches[2];
+            $endChapter = (int) $matches[3];
+            $version = isset($matches[4]) && $matches[4] !== ''
+                ? strtoupper($matches[4])
+                : $this->config['parsing']['default_version'];
+
+            // Validate book exists
+            if (!BibleMetadata::findBook($book)) {
+                return null;
+            }
+
+            return [
+                'book' => $book,
+                'chapter' => $chapter,
+                'end_chapter' => $endChapter,
+                'start_verse' => null,
+                'end_verse' => null,
+                'version' => $version,
+            ];
+        }
+
+        // Pattern 2: Verse range - "Book Chapter:Verse-Verse Version"
+        $verseRangePattern = '/^([\d\s\w]+?)\s+(\d+):(\d+)(?:-(\d+))?\s*([A-Z]+)?$/i';
+
+        if (preg_match($verseRangePattern, $reference, $matches)) {
             $book = trim($matches[1]);
             $chapter = (int) $matches[2];
             $startVerse = (int) $matches[3];
@@ -562,6 +670,7 @@ class BibleService
             return [
                 'book' => $book,
                 'chapter' => $chapter,
+                'end_chapter' => null,
                 'start_verse' => $startVerse,
                 'end_verse' => $endVerse,
                 'version' => $version,

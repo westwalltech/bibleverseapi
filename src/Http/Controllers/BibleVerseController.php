@@ -17,7 +17,7 @@ class BibleVerseController extends Controller
     }
 
     /**
-     * Fetch a single verse or verse range
+     * Fetch a single verse, verse range, whole chapter, or chapter range
      *
      * POST /cp/bible-verses/fetch
      */
@@ -26,7 +26,8 @@ class BibleVerseController extends Controller
         $validated = $request->validate([
             'book' => 'required|string',
             'chapter' => 'required|integer|min:1',
-            'start_verse' => 'required|integer|min:1',
+            'end_chapter' => 'nullable|integer|min:1',
+            'start_verse' => 'nullable|integer|min:1',
             'end_verse' => 'nullable|integer|min:1',
             'version' => 'required|string',
         ]);
@@ -34,9 +35,10 @@ class BibleVerseController extends Controller
         $result = $this->bibleService->fetchVerse(
             $validated['book'],
             $validated['chapter'],
-            $validated['start_verse'],
+            $validated['start_verse'] ?? null,
             $validated['end_verse'] ?? null,
-            $validated['version']
+            $validated['version'],
+            $validated['end_chapter'] ?? null
         );
 
         if ($result['success']) {

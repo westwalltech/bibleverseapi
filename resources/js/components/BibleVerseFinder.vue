@@ -23,7 +23,7 @@
                 </button>
             </div>
             <div class="help-block mt-1">
-                Format: Book Chapter:Verse or Book Chapter:Verse-EndVerse VERSION
+                Format: Book Chapter:Verse, Book Chapter-EndChapter, or Book Chapter:Verse-EndVerse VERSION
             </div>
         </div>
 
@@ -83,8 +83,8 @@
                         </select>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <!-- Chapter -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+                        <!-- Start Chapter -->
                         <div>
                             <label class="publish-field-label">Chapter</label>
                             <input
@@ -97,15 +97,30 @@
                             />
                         </div>
 
+                        <!-- End Chapter (for chapter ranges) -->
+                        <div>
+                            <label class="publish-field-label">End Chapter (optional)</label>
+                            <input
+                                type="number"
+                                v-model.number="verse.end_chapter"
+                                @change="onEndChapterChange(index)"
+                                min="1"
+                                class="input-text"
+                                :disabled="!verse.chapter || verse.fetching"
+                                placeholder="For chapter ranges"
+                            />
+                        </div>
+
                         <!-- Start Verse -->
                         <div>
-                            <label class="publish-field-label">Start Verse</label>
+                            <label class="publish-field-label">Start Verse (optional)</label>
                             <input
                                 type="number"
                                 v-model.number="verse.start_verse"
                                 min="1"
                                 class="input-text"
-                                :disabled="!verse.chapter || verse.fetching"
+                                :disabled="!verse.chapter || verse.fetching || verse.end_chapter"
+                                placeholder="Leave empty for whole chapter"
                             />
                         </div>
 
@@ -117,8 +132,8 @@
                                 v-model.number="verse.end_verse"
                                 min="1"
                                 class="input-text"
-                                :disabled="!verse.chapter || verse.fetching"
-                                placeholder="Leave empty for single verse"
+                                :disabled="!verse.chapter || verse.fetching || verse.end_chapter"
+                                placeholder="For verse ranges"
                             />
                         </div>
 
@@ -139,6 +154,14 @@
                                 </option>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- Help text for chapter vs verse ranges -->
+                    <div v-if="verse.chapter" class="help-block mb-3">
+                        <span v-if="verse.end_chapter">Chapter range: Will fetch all verses from {{ verse.book }} {{ verse.chapter }} through {{ verse.end_chapter }}</span>
+                        <span v-else-if="!verse.start_verse">Whole chapter: Will fetch all verses from {{ verse.book }} {{ verse.chapter }}</span>
+                        <span v-else-if="verse.end_verse">Verse range: {{ verse.book }} {{ verse.chapter }}:{{ verse.start_verse }}-{{ verse.end_verse }}</span>
+                        <span v-else>Single verse: {{ verse.book }} {{ verse.chapter }}:{{ verse.start_verse }}</span>
                     </div>
 
                     <!-- Fetch Button -->
@@ -294,6 +317,7 @@ export default {
             this.verses.push({
                 book: '',
                 chapter: null,
+                end_chapter: null,
                 start_verse: null,
                 end_verse: null,
                 version: this.meta.defaultVersion || 'NKJV',
@@ -311,7 +335,11 @@ export default {
         },
 
         canFetch(verse) {
-            return verse.book && verse.chapter > 0 && verse.start_verse > 0 && verse.version;
+            // Can fetch if we have book, chapter, and version
+            // Chapter ranges (end_chapter set) don't need verse numbers
+            // Whole chapters (no start_verse) are also valid
+            // Specific verses need start_verse
+            return verse.book && verse.chapter > 0 && verse.version;
         },
 
         async fetchVerse(index) {
@@ -328,7 +356,8 @@ export default {
                 const response = await axios.post('/cp/bible-verses/fetch', {
                     book: verse.book,
                     chapter: verse.chapter,
-                    start_verse: verse.start_verse,
+                    end_chapter: verse.end_chapter || null,
+                    start_verse: verse.start_verse || null,
                     end_verse: verse.end_verse || null,
                     version: verse.version,
                 });
@@ -378,8 +407,9 @@ export default {
                     this.verses.push({
                         book: parsed.book,
                         chapter: parsed.chapter,
-                        start_verse: parsed.start_verse,
-                        end_verse: parsed.end_verse,
+                        end_chapter: parsed.end_chapter || null,
+                        start_verse: parsed.start_verse || null,
+                        end_verse: parsed.end_verse || null,
                         version: parsed.version,
                         text: '',
                         reference: '',
@@ -410,6 +440,7 @@ export default {
             // Reset chapter and verses when book changes
             const verse = this.verses[index];
             verse.chapter = null;
+            verse.end_chapter = null;
             verse.start_verse = null;
             verse.end_verse = null;
             verse.text = '';
@@ -419,8 +450,20 @@ export default {
         onChapterChange(index) {
             // Reset verses when chapter changes
             const verse = this.verses[index];
+            verse.end_chapter = null;
             verse.start_verse = null;
             verse.end_verse = null;
+            verse.text = '';
+            verse.error = null;
+        },
+
+        onEndChapterChange(index) {
+            // When end_chapter is set, clear verse numbers (chapter range mode)
+            const verse = this.verses[index];
+            if (verse.end_chapter) {
+                verse.start_verse = null;
+                verse.end_verse = null;
+            }
             verse.text = '';
             verse.error = null;
         },

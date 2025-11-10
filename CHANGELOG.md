@@ -5,6 +5,35 @@ All notable changes to Bible Verse Finder will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-11-10
+
+### Added
+- **Chapter Range Support**: Fetch multiple chapters at once (e.g., "Psalm 46-47")
+- **Whole Chapter Fetching**: Fetch entire chapters without specifying verse numbers
+- New "End Chapter" field in Control Panel for chapter range selection
+- Support for parsing chapter ranges in Quick Add (e.g., "Psalm 46-47 NKJV")
+- Visual indicators showing what will be fetched (chapter range, whole chapter, verse range, or single verse)
+- New template variables: `is_chapter_range` and `is_verse_range` for Antlers templates
+- `end_chapter` field in data structure for storing chapter ranges
+
+### Changed
+- Reference parser now supports three formats:
+  - Chapter ranges: "Book Chapter-Chapter" (e.g., "Psalm 46-47")
+  - Verse ranges: "Book Chapter:Verse-Verse" (e.g., "John 3:16-17")
+  - Single verses: "Book Chapter:Verse" (e.g., "John 3:16")
+- "Start Verse" field is now optional (can be left empty for whole chapters)
+- Verse input fields are automatically disabled when chapter range is selected
+- Grid layout changed from 4 columns to 5 columns to accommodate End Chapter field
+- Updated help text to show all supported reference formats
+
+### Technical
+- Added `fetchChapterRange()` method to BibleService for fetching multiple chapters
+- Added `fetchWholeChapter()` method to BibleService for fetching complete chapters
+- Updated `fetchVerse()` signature to accept optional `$endChapter` parameter
+- Enhanced validation logic to support chapter-only requests without verses
+- Updated API controller to handle nullable `start_verse` and new `end_chapter` parameters
+- Improved fieldtype augmentation to distinguish between chapter and verse ranges
+
 ## [1.0.0] - 2024-11-10
 
 ### Added
@@ -48,4 +77,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive README documentation
 - MIT License
 
+[1.1.0]: https://github.com/westwalltech/bibleverseapi/releases/tag/v1.1.0
 [1.0.0]: https://github.com/westwalltech/bibleverseapi/releases/tag/v1.0.0

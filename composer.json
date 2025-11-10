@@ -2,7 +2,7 @@
     "name": "westwalltech/bibleverseapi",
     "description": "A Statamic addon for selecting and fetching Bible verses from multiple versions using external APIs",
     "type": "statamic-addon",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "license": "MIT",
     "keywords": [
         "statamic",

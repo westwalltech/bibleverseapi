@@ -39,6 +39,7 @@ class BibleVerseFinder extends Fieldtype
                 'reference' => $verse['reference'] ?? '',
                 'book' => $verse['book'] ?? '',
                 'chapter' => $verse['chapter'] ?? null,
+                'end_chapter' => $verse['end_chapter'] ?? null,
                 'start_verse' => $verse['start_verse'] ?? null,
                 'end_verse' => $verse['end_verse'] ?? null,
                 'version' => $verse['version'] ?? 'NKJV',
@@ -80,17 +81,28 @@ class BibleVerseFinder extends Fieldtype
         }
 
         return array_map(function ($verse) {
+            $endChapter = $verse['end_chapter'] ?? null;
+            $startVerse = $verse['start_verse'] ?? null;
+            $endVerse = $verse['end_verse'] ?? null;
+
+            // Determine if this is a range (chapter range or verse range)
+            $isRange = ($endChapter !== null && $endChapter !== $verse['chapter'])
+                    || ($startVerse !== null && $endVerse !== null && $startVerse !== $endVerse);
+
             return [
                 'reference' => $verse['reference'] ?? '',
                 'book' => $verse['book'] ?? '',
                 'chapter' => $verse['chapter'] ?? null,
-                'start_verse' => $verse['start_verse'] ?? null,
-                'end_verse' => $verse['end_verse'] ?? null,
+                'end_chapter' => $endChapter,
+                'start_verse' => $startVerse,
+                'end_verse' => $endVerse,
                 'version' => $verse['version'] ?? '',
                 'version_name' => $this->getVersionName($verse['version'] ?? ''),
                 'text' => $verse['text'] ?? '',
                 'text_without_numbers' => $this->stripVerseNumbers($verse['text'] ?? ''),
-                'is_range' => ($verse['start_verse'] ?? null) !== ($verse['end_verse'] ?? null),
+                'is_range' => $isRange,
+                'is_chapter_range' => $endChapter !== null && $endChapter !== $verse['chapter'],
+                'is_verse_range' => $startVerse !== null && $endVerse !== null && $startVerse !== $endVerse,
                 'fetched_at' => $verse['fetched_at'] ?? null,
                 'api_source' => $verse['api_source'] ?? null,
                 'has_text' => !empty($verse['text']),
