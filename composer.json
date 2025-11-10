@@ -1,0 +1,69 @@
+{
+    "name": "newsong/bible-verse-finder",
+    "description": "A Statamic addon for selecting and fetching Bible verses from multiple versions using external APIs",
+    "type": "statamic-addon",
+    "version": "1.0.0",
+    "license": "MIT",
+    "keywords": [
+        "statamic",
+        "addon",
+        "bible",
+        "scripture",
+        "verses",
+        "fieldtype",
+        "nkjv",
+        "kjv",
+        "esv",
+        "niv",
+        "amp"
+    ],
+    "homepage": "https://github.com/newsong/bible-verse-finder",
+    "authors": [
+        {
+            "name": "New Song Church",
+            "email": "tech@newsongpeople.com",
+            "homepage": "https://newsongchurch.org"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/newsong/bible-verse-finder/issues",
+        "source": "https://github.com/newsong/bible-verse-finder"
+    },
+    "require": {
+        "php": "^8.2|^8.3",
+        "statamic/cms": "^5.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "NewSong\\BibleVerseFinder\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NewSong\\BibleVerseFinder\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Bible Verse Finder",
+            "description": "Select and fetch Bible verses from multiple versions"
+        },
+        "laravel": {
+            "providers": [
+                "NewSong\\BibleVerseFinder\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

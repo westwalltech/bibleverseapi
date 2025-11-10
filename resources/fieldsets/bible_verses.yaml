@@ -1,0 +1,14 @@
+title: Bible Verses
+fields:
+  -
+    handle: bible_verses
+    field:
+      type: bible_verse_finder
+      display: 'Bible Verses'
+      instructions: 'Select Bible verses to fetch and display on your site'
+      default_version: NKJV
+      enable_reference_parsing: true
+      max_verses: 0
+      icon: book
+      listable: hidden
+      replicator_preview: false
