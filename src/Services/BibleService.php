@@ -615,16 +615,45 @@ class BibleService
     /**
      * Parse a Bible reference string
      * Supports formats:
+     * - "Psalm 46" (whole chapter)
+     * - "Psalm 46 NKJV" (whole chapter with version)
+     * - "Psalm 46-47" (chapter range)
      * - "John 3:16" (single verse)
      * - "John 3:16-17" (verse range)
-     * - "Psalm 46-47" (chapter range)
      * - "John 3:16-17 NKJV" (with version)
      */
     public function parseReference(string $reference): ?array
     {
         $reference = trim($reference);
 
-        // Pattern 1: Chapter range - "Psalm 46-47" or "Psalm 46-47 NKJV"
+        // Pattern 1: Verse range - "Book Chapter:Verse-Verse Version" (check first because it's most specific)
+        $verseRangePattern = '/^([\d\s\w]+?)\s+(\d+):(\d+)(?:-(\d+))?\s*([A-Z]+)?$/i';
+
+        if (preg_match($verseRangePattern, $reference, $matches)) {
+            $book = trim($matches[1]);
+            $chapter = (int) $matches[2];
+            $startVerse = (int) $matches[3];
+            $endVerse = isset($matches[4]) && $matches[4] !== '' ? (int) $matches[4] : null;
+            $version = isset($matches[5]) && $matches[5] !== ''
+                ? strtoupper($matches[5])
+                : $this->config['parsing']['default_version'];
+
+            // Validate book exists
+            if (!BibleMetadata::findBook($book)) {
+                return null;
+            }
+
+            return [
+                'book' => $book,
+                'chapter' => $chapter,
+                'end_chapter' => null,
+                'start_verse' => $startVerse,
+                'end_verse' => $endVerse,
+                'version' => $version,
+            ];
+        }
+
+        // Pattern 2: Chapter range - "Psalm 46-47" or "Psalm 46-47 NKJV"
         $chapterRangePattern = '/^([\d\s\w]+?)\s+(\d+)-(\d+)\s*([A-Z]+)?$/i';
 
         if (preg_match($chapterRangePattern, $reference, $matches)) {
@@ -650,16 +679,14 @@ class BibleService
             ];
         }
 
-        // Pattern 2: Verse range - "Book Chapter:Verse-Verse Version"
-        $verseRangePattern = '/^([\d\s\w]+?)\s+(\d+):(\d+)(?:-(\d+))?\s*([A-Z]+)?$/i';
+        // Pattern 3: Single chapter - "Psalm 46" or "Psalm 46 NKJV"
+        $singleChapterPattern = '/^([\d\s\w]+?)\s+(\d+)\s*([A-Z]+)?$/i';
 
-        if (preg_match($verseRangePattern, $reference, $matches)) {
+        if (preg_match($singleChapterPattern, $reference, $matches)) {
             $book = trim($matches[1]);
             $chapter = (int) $matches[2];
-            $startVerse = (int) $matches[3];
-            $endVerse = isset($matches[4]) && $matches[4] !== '' ? (int) $matches[4] : null;
-            $version = isset($matches[5]) && $matches[5] !== ''
-                ? strtoupper($matches[5])
+            $version = isset($matches[3]) && $matches[3] !== ''
+                ? strtoupper($matches[3])
                 : $this->config['parsing']['default_version'];
 
             // Validate book exists
@@ -671,8 +698,8 @@ class BibleService
                 'book' => $book,
                 'chapter' => $chapter,
                 'end_chapter' => null,
-                'start_verse' => $startVerse,
-                'end_verse' => $endVerse,
+                'start_verse' => null,
+                'end_verse' => null,
                 'version' => $version,
             ];
         }

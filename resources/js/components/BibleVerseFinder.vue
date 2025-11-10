@@ -10,7 +10,7 @@
                     type="text"
                     v-model="referenceInput"
                     @keypress.enter="parseAndAddReference"
-                    placeholder="e.g., John 3:16-17 NKJV"
+                    placeholder="e.g., Psalm 46, John 3:16-17 NKJV"
                     class="input-text flex-1"
                 />
                 <button
@@ -23,7 +23,7 @@
                 </button>
             </div>
             <div class="help-block mt-1">
-                Format: Book Chapter:Verse, Book Chapter-EndChapter, or Book Chapter:Verse-EndVerse VERSION
+                Examples: "Psalm 46", "Psalm 46-47", "John 3:16", "John 3:16-17 NKJV"
             </div>
         </div>
 

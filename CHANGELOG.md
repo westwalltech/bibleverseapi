@@ -5,6 +5,21 @@ All notable changes to Bible Verse Finder will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2024-11-10
+
+### Added
+- Single chapter parsing support in Quick Add (e.g., "Psalm 46" or "Psalm 46 NKJV")
+- Simplified reference format without requiring verse numbers for whole chapters
+
+### Changed
+- Reference parser now checks patterns in optimal order (verse, chapter range, single chapter)
+- Updated Quick Add placeholder text with simpler examples
+- Updated help text to show all supported formats more clearly
+- Pattern matching is now more intuitive and user-friendly
+
+### Fixed
+- Parser now correctly identifies single chapter references before attempting other patterns
+
 ## [1.1.0] - 2024-11-10
 
 ### Added
@@ -77,5 +92,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive README documentation
 - MIT License
 
+[1.1.1]: https://github.com/westwalltech/bibleverseapi/releases/tag/v1.1.1
 [1.1.0]: https://github.com/westwalltech/bibleverseapi/releases/tag/v1.1.0
 [1.0.0]: https://github.com/westwalltech/bibleverseapi/releases/tag/v1.0.0
