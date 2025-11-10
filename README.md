@@ -20,7 +20,7 @@ A powerful Statamic addon that allows you to select Bible verses in the Control 
 ### Via Composer (Recommended)
 
 ```bash
-composer require newsong/bible-verse-finder
+composer require westwalltech/bibleverseapi
 ```
 
 ### Local Development
@@ -41,7 +41,7 @@ If developing within a Statamic project:
 
 2. Require the package:
 ```bash
-composer require newsong/bible-verse-finder
+composer require westwalltech/bibleverseapi
 ```
 
 ## Configuration
@@ -313,12 +313,12 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/newsong/bible-verse-finder/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/newsong/bible-verse-finder/discussions)
+- **Issues**: [GitHub Issues](https://github.com/westwalltech/bibleverseapi/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/westwalltech/bibleverseapi/discussions)
 
 ## Credits
 
-Created by [New Song Church](https://newsongchurch.org)
+Created by [Westwall Tech](https://newsongchurch.org)
 
 ### APIs Used
 
