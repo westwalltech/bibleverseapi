@@ -1,8 +1,8 @@
 {
-    "name": "westwalltech/bibleverseapi",
+    "name": "newsong/bible-verse-finder",
     "description": "A Statamic addon for selecting and fetching Bible verses from multiple versions using external APIs",
     "type": "statamic-addon",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "license": "MIT",
     "keywords": [
         "statamic",
@@ -15,20 +15,16 @@
         "kjv",
         "esv",
         "niv",
-        "amp"
+        "amp",
+        "graphql"
     ],
-    "homepage": "https://github.com/westwalltech/bibleverseapi",
     "authors": [
         {
-            "name": "Westwall Tech",
+            "name": "NewSong Church",
             "email": "tech@newsongpeople.com",
             "homepage": "https://newsongchurch.org"
         }
     ],
-    "support": {
-        "issues": "https://github.com/westwalltech/bibleverseapi/issues",
-        "source": "https://github.com/westwalltech/bibleverseapi"
-    },
     "require": {
         "php": "^8.2|^8.3",
         "statamic/cms": "^5.0",

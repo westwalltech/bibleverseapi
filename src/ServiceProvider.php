@@ -3,11 +3,13 @@
 namespace NewSong\BibleVerseFinder;
 
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\Facades\GraphQL;
 use NewSong\BibleVerseFinder\Fieldtypes\BibleVerseFinder;
 use NewSong\BibleVerseFinder\Console\Commands\TestBibleAPICommand;
 use NewSong\BibleVerseFinder\Console\Commands\DownloadBibleCommand;
 use NewSong\BibleVerseFinder\Console\Commands\ListBibleVersionsCommand;
 use NewSong\BibleVerseFinder\Console\Commands\ClearBibleCacheCommand;
+use NewSong\BibleVerseFinder\GraphQL\BibleVerseType;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -35,6 +37,9 @@ class ServiceProvider extends AddonServiceProvider
 
     public function bootAddon()
     {
+        // Register GraphQL types
+        GraphQL::addType(BibleVerseType::class);
+
         // Publish configuration
         $this->publishes([
             __DIR__.'/../config/bible-verse-finder.php' => config_path('bible-verse-finder.php'),

@@ -5,6 +5,28 @@ All notable changes to Bible Verse Finder will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-11-12
+
+### Added
+- **GraphQL Support** - Full GraphQL API integration for headless/mobile applications
+  - Added `BibleVerseType` GraphQL type for structured Bible verse data
+  - Bible verses now properly serialize as composite objects in GraphQL instead of strings
+  - Each verse exposes all fields: reference, book, chapter, verses, version, text, and metadata
+  - Support for querying arrays of verses with proper type safety
+- GraphQL types registered automatically via ServiceProvider
+- `toGqlType()` method in BibleVerseFinder fieldtype for proper type definition
+- GraphQL keyword added to composer.json for better discoverability
+
+### Changed
+- Updated ServiceProvider to import and use `Statamic\Facades\GraphQL`
+- Updated BibleVerseFinder fieldtype to import Statamic's GraphQL facade
+
+### Technical Details
+- GraphQL type located in `src/GraphQL/BibleVerseType.php`
+- Fieldtype returns `listOf(BibleVerse)` for GraphQL queries
+- Supports querying nested verse fields with proper type safety
+- Compatible with Statamic's GraphQL API and third-party GraphQL clients
+
 ## [1.1.1] - 2024-11-10
 
 ### Added

@@ -3,6 +3,7 @@
 namespace NewSong\BibleVerseFinder\Fieldtypes;
 
 use Statamic\Fields\Fieldtype;
+use Statamic\Facades\GraphQL;
 use NewSong\BibleVerseFinder\Data\BibleMetadata;
 
 class BibleVerseFinder extends Fieldtype
@@ -223,5 +224,18 @@ class BibleVerseFinder extends Fieldtype
         }
 
         return $result;
+    }
+
+    /**
+     * Define the GraphQL type for this fieldtype
+     *
+     * @return array
+     */
+    public function toGqlType()
+    {
+        return [
+            'type' => GraphQL::listOf(GraphQL::type('BibleVerse')),
+            'description' => 'List of Bible verses with references and text',
+        ];
     }
 }
