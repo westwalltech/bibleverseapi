@@ -128,7 +128,7 @@ return [
     'validation' => [
         'strict_mode' => true, // Validate chapter/verse existence before API call
         'allow_ranges' => true, // Allow verse ranges (e.g., 1-5)
-        'max_verses_per_range' => 20, // Maximum verses in a single range
+        'max_verses_per_range' => env('BIBLE_MAX_VERSES', 20), // Maximum verses in a single range
     ],
 
     /*
