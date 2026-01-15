@@ -261,6 +261,7 @@
 
 <script>
 import axios from 'axios';
+import { Fieldtype } from '@statamic/cms';
 
 export default {
     mixins: [Fieldtype],
