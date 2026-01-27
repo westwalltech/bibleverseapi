@@ -13,25 +13,28 @@ use NewSong\BibleVerseFinder\Http\Controllers\BibleVerseController;
 |
 */
 
-Route::name('bible-verses.')->prefix('bible-verses')->group(function () {
-    // Fetch single verse
-    Route::post('fetch', [BibleVerseController::class, 'fetch'])->name('fetch');
+Route::name('bible-verses.')
+    ->prefix('bible-verses')
+    ->middleware('can:access bible verses')
+    ->group(function () {
+        // Fetch single verse
+        Route::post('fetch', [BibleVerseController::class, 'fetch'])->name('fetch');
 
-    // Fetch multiple verses
-    Route::post('fetch-multiple', [BibleVerseController::class, 'fetchMultiple'])->name('fetch-multiple');
+        // Fetch multiple verses
+        Route::post('fetch-multiple', [BibleVerseController::class, 'fetchMultiple'])->name('fetch-multiple');
 
-    // Parse reference string
-    Route::post('parse', [BibleVerseController::class, 'parse'])->name('parse');
+        // Parse reference string
+        Route::post('parse', [BibleVerseController::class, 'parse'])->name('parse');
 
-    // Validate verse reference
-    Route::post('validate', [BibleVerseController::class, 'validate'])->name('validate');
+        // Validate verse reference
+        Route::post('validate', [BibleVerseController::class, 'validate'])->name('validate');
 
-    // Get chapter count for a book
-    Route::get('chapters/{book}', [BibleVerseController::class, 'getChapters'])->name('chapters');
+        // Get chapter count for a book
+        Route::get('chapters/{book}', [BibleVerseController::class, 'getChapters'])->name('chapters');
 
-    // Get verse count for a chapter
-    Route::get('verses/{book}/{chapter}', [BibleVerseController::class, 'getVerses'])->name('verses');
+        // Get verse count for a chapter
+        Route::get('verses/{book}/{chapter}', [BibleVerseController::class, 'getVerses'])->name('verses');
 
-    // Get available versions
-    Route::get('versions', [BibleVerseController::class, 'getVersions'])->name('versions');
-});
+        // Get available versions
+        Route::get('versions', [BibleVerseController::class, 'getVersions'])->name('versions');
+    });
