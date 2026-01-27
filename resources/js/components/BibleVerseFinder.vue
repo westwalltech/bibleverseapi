@@ -219,6 +219,7 @@ export default {
             verses: [],
             referenceInput: '',
             refreshing: false,
+            initializing: true,
         };
     },
 
@@ -237,6 +238,9 @@ export default {
         verses: {
             deep: true,
             handler(newVerses) {
+                // Skip emitting during initialization to avoid dirty state
+                if (this.initializing) return;
+
                 // Filter out verses without text before updating
                 const validVerses = newVerses.filter(v => v.text && v.text.trim() !== '');
                 this.$emit('update:value', validVerses);
@@ -253,6 +257,11 @@ export default {
                 error: null,
             }));
         }
+
+        // Clear initializing flag after mount to allow future updates
+        this.$nextTick(() => {
+            this.initializing = false;
+        });
     },
 
     methods: {
