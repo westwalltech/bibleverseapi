@@ -9,12 +9,11 @@ export default defineConfig({
         strictPort: true,
     },
     plugins: [
+        statamic(),
         laravel({
             input: ['resources/js/addon.js'],
-            publicDirectory: '../../../public/vendor/bible-verse-finder',
+            publicDirectory: 'resources/dist',
             buildDirectory: 'build',
-            hotFile: '../../../public/vendor/bible-verse-finder/hot',
         }),
-        statamic(),
     ],
 });
