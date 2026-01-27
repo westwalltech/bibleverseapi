@@ -4,7 +4,7 @@ use NewSong\BibleVerseFinder\Services\BibleService;
 
 describe('parseReference', function () {
     beforeEach(function () {
-        $this->service = new BibleService();
+        $this->service = new BibleService;
     });
 
     it('parses single verse reference', function () {

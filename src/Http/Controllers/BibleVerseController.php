@@ -4,8 +4,8 @@ namespace NewSong\BibleVerseFinder\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use NewSong\BibleVerseFinder\Services\BibleService;
 use NewSong\BibleVerseFinder\Data\BibleMetadata;
+use NewSong\BibleVerseFinder\Services\BibleService;
 
 class BibleVerseController extends Controller
 {
@@ -144,23 +144,25 @@ class BibleVerseController extends Controller
 
         $bookData = BibleMetadata::findBook($book);
 
-        if (!$bookData) {
+        if (! $bookData) {
             return response()->json([
                 'valid' => false,
                 'error' => "Book '{$book}' not found",
             ]);
         }
 
-        if (!BibleMetadata::validateChapter($book, $chapter)) {
+        if (! BibleMetadata::validateChapter($book, $chapter)) {
             $maxChapters = BibleMetadata::getChapterCount($book);
+
             return response()->json([
                 'valid' => false,
                 'error' => "Chapter {$chapter} does not exist in {$book} (max: {$maxChapters})",
             ]);
         }
 
-        if (!BibleMetadata::validateVerse($book, $chapter, $verse)) {
+        if (! BibleMetadata::validateVerse($book, $chapter, $verse)) {
             $maxVerses = BibleMetadata::getVerseCount($book, $chapter);
+
             return response()->json([
                 'valid' => false,
                 'error' => "Verse {$verse} does not exist in {$book} {$chapter} (max: {$maxVerses})",

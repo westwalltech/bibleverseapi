@@ -3,8 +3,8 @@
 namespace NewSong\BibleVerseFinder\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 class DownloadBibleCommand extends Command
 {
@@ -20,7 +20,7 @@ class DownloadBibleCommand extends Command
         $storagePath = $config['storage']['path'];
 
         // Ensure storage directory exists
-        if (!File::exists($storagePath)) {
+        if (! File::exists($storagePath)) {
             File::makeDirectory($storagePath, 0755, true);
             $this->info("Created storage directory: {$storagePath}");
         }
@@ -35,10 +35,11 @@ class DownloadBibleCommand extends Command
         } elseif (empty($versions)) {
             $this->error('Please specify versions to download or use --all flag');
             $this->line('Example: php artisan bible-verses:download kjv nkjv');
+
             return Command::FAILURE;
         }
 
-        $this->info('Starting download of ' . count($versions) . ' version(s)...');
+        $this->info('Starting download of '.count($versions).' version(s)...');
         $this->newLine();
 
         $successful = 0;
@@ -47,9 +48,10 @@ class DownloadBibleCommand extends Command
         foreach ($versions as $version) {
             $version = strtoupper($version);
 
-            if (!isset($downloadSources[$version])) {
+            if (! isset($downloadSources[$version])) {
                 $this->warn("Skipping {$version}: No download source configured");
                 $failed++;
+
                 continue;
             }
 
@@ -58,6 +60,7 @@ class DownloadBibleCommand extends Command
             if (empty($url)) {
                 $this->warn("Skipping {$version}: Download URL not available");
                 $failed++;
+
                 continue;
             }
 
@@ -66,9 +69,10 @@ class DownloadBibleCommand extends Command
             try {
                 $response = Http::timeout(300)->get($url);
 
-                if (!$response->successful()) {
+                if (! $response->successful()) {
                     $this->error("  ✗ Failed to download {$version} (HTTP {$response->status()})");
                     $failed++;
+
                     continue;
                 }
 

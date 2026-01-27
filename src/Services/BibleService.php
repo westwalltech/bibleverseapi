@@ -2,9 +2,9 @@
 
 namespace NewSong\BibleVerseFinder\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use NewSong\BibleVerseFinder\Data\BibleMetadata;
 
@@ -21,12 +21,12 @@ class BibleService
     /**
      * Fetch a single verse, verse range, whole chapter, or chapter range
      *
-     * @param string $book Book name (e.g., "John", "1 Samuel", "Psalm")
-     * @param int $chapter Starting chapter number
-     * @param int|null $startVerse Start verse number (null for whole chapter)
-     * @param int|null $endVerse End verse number (null for single verse)
-     * @param string $version Bible version (e.g., "NKJV", "KJV")
-     * @param int|null $endChapter End chapter number for chapter ranges (e.g., Psalm 46-47)
+     * @param  string  $book  Book name (e.g., "John", "1 Samuel", "Psalm")
+     * @param  int  $chapter  Starting chapter number
+     * @param  int|null  $startVerse  Start verse number (null for whole chapter)
+     * @param  int|null  $endVerse  End verse number (null for single verse)
+     * @param  string  $version  Bible version (e.g., "NKJV", "KJV")
+     * @param  int|null  $endChapter  End chapter number for chapter ranges (e.g., Psalm 46-47)
      * @return array{success: bool, data: array|null, error: string|null}
      */
     public function fetchVerse(
@@ -49,7 +49,7 @@ class BibleService
 
         // Validate inputs for verse-level requests
         $validation = $this->validate($book, $chapter, $startVerse, $endVerse);
-        if (!$validation['valid']) {
+        if (! $validation['valid']) {
             return [
                 'success' => false,
                 'data' => null,
@@ -67,6 +67,7 @@ class BibleService
             $cached = $this->getCachedVerse($book, $chapter, $startVerse, $endVerse, $version);
             if ($cached) {
                 Log::info("Bible verse cache hit: {$reference} ({$version})");
+
                 return [
                     'success' => true,
                     'data' => $cached,
@@ -80,6 +81,7 @@ class BibleService
             $localData = $this->fetchFromLocal($book, $chapter, $startVerse, $endVerse, $version);
             if ($localData) {
                 $this->cacheVerse($book, $chapter, $startVerse, $endVerse, $version, $localData);
+
                 return [
                     'success' => true,
                     'data' => $localData,
@@ -113,12 +115,12 @@ class BibleService
         for ($chapterNum = $startChapter; $chapterNum <= $endChapter; $chapterNum++) {
             $result = $this->fetchWholeChapter($book, $chapterNum, $version);
 
-            if (!$result['success']) {
+            if (! $result['success']) {
                 return $result; // Return error if any chapter fails
             }
 
             $chapters[] = $result['data'];
-            $combinedText .= ($combinedText ? "\n\n" : '') . $result['data']['text'];
+            $combinedText .= ($combinedText ? "\n\n" : '').$result['data']['text'];
         }
 
         $reference = "{$book} {$startChapter}-{$endChapter}";
@@ -176,7 +178,7 @@ class BibleService
     ): ?array {
         $jsonPath = $this->getLocalJsonPath($version);
 
-        if (!File::exists($jsonPath)) {
+        if (! File::exists($jsonPath)) {
             return null;
         }
 
@@ -192,7 +194,7 @@ class BibleService
             $bibleData = $this->localBibleData['data'];
             $bookData = $this->findBookInLocalData($bibleData, $book);
 
-            if (!$bookData) {
+            if (! $bookData) {
                 return null;
             }
 
@@ -212,6 +214,7 @@ class BibleService
             return $this->formatVerseData($book, $chapter, $startVerse, $endVerse, $version, $verses);
         } catch (\Exception $e) {
             Log::warning("Failed to read local Bible JSON: {$e->getMessage()}");
+
             return null;
         }
     }
@@ -235,19 +238,22 @@ class BibleService
         switch ($primaryAPI) {
             case 'bolls':
                 $result = $this->fetchFromBolls($bookNumber, $chapter, $startVerse, $endVerse, $version);
+
                 break;
             case 'bible-api':
                 $result = $this->fetchFromBibleAPI($book, $chapter, $startVerse, $endVerse, $version);
+
                 break;
             case 'scripture-api':
                 $result = $this->fetchFromScriptureAPI($book, $chapter, $startVerse, $endVerse, $version);
+
                 break;
             default:
                 $result = ['success' => false, 'data' => null, 'error' => 'Invalid primary API configured'];
         }
 
         // If primary fails, try fallbacks
-        if (!$result['success']) {
+        if (! $result['success']) {
             Log::warning("Primary API failed, trying fallbacks: {$result['error']}");
 
             // Try Bolls if it wasn't the primary
@@ -303,7 +309,7 @@ class BibleService
                         ];
                     }
                 } else {
-                    Log::warning("Bolls API failed for verse {$v}: " . $response->body());
+                    Log::warning("Bolls API failed for verse {$v}: ".$response->body());
                 }
             }
 
@@ -326,6 +332,7 @@ class BibleService
             ];
         } catch (\Exception $e) {
             Log::error("Bolls API error: {$e->getMessage()}");
+
             return [
                 'success' => false,
                 'data' => null,
@@ -360,7 +367,7 @@ class BibleService
             $url = "{$baseUrl}/{$reference}?translation={$apiVersion}";
             $response = Http::timeout($timeout)->get($url);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return [
                     'success' => false,
                     'data' => null,
@@ -370,7 +377,7 @@ class BibleService
 
             $data = $response->json();
 
-            if (!isset($data['verses'])) {
+            if (! isset($data['verses'])) {
                 return [
                     'success' => false,
                     'data' => null,
@@ -393,6 +400,7 @@ class BibleService
             ];
         } catch (\Exception $e) {
             Log::error("Bible-API error: {$e->getMessage()}");
+
             return [
                 'success' => false,
                 'data' => null,
@@ -411,7 +419,7 @@ class BibleService
         int $endVerse,
         string $version
     ): array {
-        if (!$this->config['apis']['scripture_api']['enabled']) {
+        if (! $this->config['apis']['scripture_api']['enabled']) {
             return [
                 'success' => false,
                 'data' => null,
@@ -439,15 +447,15 @@ class BibleService
     ): array {
         $bookData = BibleMetadata::findBook($book);
 
-        if (!$bookData) {
+        if (! $bookData) {
             return ['valid' => false, 'error' => "Book '{$book}' not found"];
         }
 
-        if (!BibleMetadata::validateChapter($book, $chapter)) {
+        if (! BibleMetadata::validateChapter($book, $chapter)) {
             return ['valid' => false, 'error' => "Chapter {$chapter} does not exist in {$book}"];
         }
 
-        if (!BibleMetadata::validateVerse($book, $chapter, $startVerse)) {
+        if (! BibleMetadata::validateVerse($book, $chapter, $startVerse)) {
             return ['valid' => false, 'error' => "Verse {$startVerse} does not exist in {$book} {$chapter}"];
         }
 
@@ -456,7 +464,7 @@ class BibleService
                 return ['valid' => false, 'error' => 'End verse must be greater than or equal to start verse'];
             }
 
-            if (!BibleMetadata::validateVerse($book, $chapter, $endVerse)) {
+            if (! BibleMetadata::validateVerse($book, $chapter, $endVerse)) {
                 return ['valid' => false, 'error' => "Verse {$endVerse} does not exist in {$book} {$chapter}"];
             }
 
@@ -527,7 +535,8 @@ class BibleService
     /**
      * Clean verse text
      */
-    protected function cleanText(string $text): string {
+    protected function cleanText(string $text): string
+    {
         if ($this->config['formatting']['strip_html']) {
             $text = strip_tags($text);
         }
@@ -550,6 +559,7 @@ class BibleService
         string $version
     ): ?array {
         $key = $this->getCacheKey($book, $chapter, $startVerse, $endVerse, $version);
+
         return Cache::get($key);
     }
 
@@ -580,6 +590,7 @@ class BibleService
         string $version
     ): string {
         $bookSlug = str_replace(' ', '_', strtolower($book));
+
         return "bible_verse_{$version}_{$bookSlug}_{$chapter}_{$startVerse}_{$endVerse}";
     }
 
@@ -589,6 +600,7 @@ class BibleService
     protected function getLocalJsonPath(string $version): string
     {
         $path = $this->config['storage']['path'];
+
         return "{$path}/{$version}.json";
     }
 
@@ -639,7 +651,7 @@ class BibleService
                 : $this->config['parsing']['default_version'];
 
             // Validate book exists
-            if (!BibleMetadata::findBook($book)) {
+            if (! BibleMetadata::findBook($book)) {
                 return null;
             }
 
@@ -665,7 +677,7 @@ class BibleService
                 : $this->config['parsing']['default_version'];
 
             // Validate book exists
-            if (!BibleMetadata::findBook($book)) {
+            if (! BibleMetadata::findBook($book)) {
                 return null;
             }
 
@@ -690,7 +702,7 @@ class BibleService
                 : $this->config['parsing']['default_version'];
 
             // Validate book exists
-            if (!BibleMetadata::findBook($book)) {
+            if (! BibleMetadata::findBook($book)) {
                 return null;
             }
 

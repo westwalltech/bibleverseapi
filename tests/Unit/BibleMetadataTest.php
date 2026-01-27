@@ -121,8 +121,8 @@ describe('getBookList', function () {
 
     it('includes both testaments', function () {
         $list = BibleMetadata::getBookList();
-        $otBooks = array_filter($list, fn($b) => $b['testament'] === 'ot');
-        $ntBooks = array_filter($list, fn($b) => $b['testament'] === 'nt');
+        $otBooks = array_filter($list, fn ($b) => $b['testament'] === 'ot');
+        $ntBooks = array_filter($list, fn ($b) => $b['testament'] === 'nt');
 
         expect(count($otBooks))->toBe(39);
         expect(count($ntBooks))->toBe(27);

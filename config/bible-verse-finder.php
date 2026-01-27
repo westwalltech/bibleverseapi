@@ -40,7 +40,7 @@ return [
         'scripture_api' => [
             'base_url' => 'https://api.scripture.api.bible/v1',
             'api_key' => env('SCRIPTURE_API_KEY', ''),
-            'enabled' => !empty(env('SCRIPTURE_API_KEY')),
+            'enabled' => ! empty(env('SCRIPTURE_API_KEY')),
             'versions' => [
                 'KJV' => 'de4e12af7f28f599-02', // King James Version
                 'ESV' => '06125adad2d5898a-01', // English Standard Version

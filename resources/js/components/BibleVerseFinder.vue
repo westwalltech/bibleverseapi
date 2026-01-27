@@ -90,7 +90,7 @@
                                 :model-value="verse.start_verse"
                                 @update:model-value="updateStartVerse(index, $event)"
                                 min="1"
-                                :disabled="!verse.chapter || verse.fetching || verse.end_chapter"
+                                :disabled="!verse.chapter || verse.fetching || !!verse.end_chapter"
                                 placeholder="Optional"
                             />
                         </div>
@@ -103,7 +103,7 @@
                                 :model-value="verse.end_verse"
                                 @update:model-value="updateEndVerse(index, $event)"
                                 min="1"
-                                :disabled="!verse.chapter || verse.fetching || verse.end_chapter"
+                                :disabled="!verse.chapter || verse.fetching || !!verse.end_chapter"
                                 placeholder="Optional"
                             />
                         </div>

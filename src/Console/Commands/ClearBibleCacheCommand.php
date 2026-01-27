@@ -24,9 +24,11 @@ class ClearBibleCacheCommand extends Command
         try {
             Cache::driver($cacheDriver)->flush();
             $this->info('✓ Cache cleared successfully');
+
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('✗ Failed to clear cache: ' . $e->getMessage());
+            $this->error('✗ Failed to clear cache: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }

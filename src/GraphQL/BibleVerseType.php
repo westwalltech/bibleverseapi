@@ -9,7 +9,7 @@ class BibleVerseType extends GraphQLType
 {
     protected $attributes = [
         'name' => 'BibleVerse',
-        'description' => 'A Bible verse or passage with reference and text'
+        'description' => 'A Bible verse or passage with reference and text',
     ];
 
     public function fields(): array

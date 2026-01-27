@@ -540,7 +540,7 @@ class BibleMetadata
     {
         $book = self::findBook($bookName);
 
-        if (!$book) {
+        if (! $book) {
             return false;
         }
 
@@ -554,11 +554,12 @@ class BibleMetadata
     {
         $book = self::findBook($bookName);
 
-        if (!$book || !self::validateChapter($bookName, $chapter)) {
+        if (! $book || ! self::validateChapter($bookName, $chapter)) {
             return false;
         }
 
         $verseCount = $book['chapters'][$chapter - 1];
+
         return $verse > 0 && $verse <= $verseCount;
     }
 
@@ -569,7 +570,7 @@ class BibleMetadata
     {
         $book = self::findBook($bookName);
 
-        if (!$book || !self::validateChapter($bookName, $chapter)) {
+        if (! $book || ! self::validateChapter($bookName, $chapter)) {
             return null;
         }
 
@@ -583,7 +584,7 @@ class BibleMetadata
     {
         $book = self::findBook($bookName);
 
-        if (!$book) {
+        if (! $book) {
             return null;
         }
 

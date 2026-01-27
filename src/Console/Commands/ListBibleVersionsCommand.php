@@ -28,7 +28,7 @@ class ListBibleVersionsCommand extends Command
             $jsonPath = "{$storagePath}/{$code}.json";
             $isDownloaded = File::exists($jsonPath);
             $size = $isDownloaded ? $this->formatSize(File::size($jsonPath)) : '-';
-            $downloadAvailable = !empty($downloadSources[$code]) ? 'Yes' : 'No';
+            $downloadAvailable = ! empty($downloadSources[$code]) ? 'Yes' : 'No';
 
             $rows[] = [
                 $code,
@@ -52,11 +52,11 @@ class ListBibleVersionsCommand extends Command
     protected function formatSize(int $bytes): string
     {
         if ($bytes < 1024) {
-            return $bytes . ' B';
+            return $bytes.' B';
         } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
+            return round($bytes / 1024, 2).' KB';
         } else {
-            return round($bytes / 1048576, 2) . ' MB';
+            return round($bytes / 1048576, 2).' MB';
         }
     }
 }

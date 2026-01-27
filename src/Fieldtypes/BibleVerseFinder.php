@@ -2,9 +2,9 @@
 
 namespace NewSong\BibleVerseFinder\Fieldtypes;
 
-use Statamic\Fields\Fieldtype;
-use Statamic\Facades\GraphQL;
 use NewSong\BibleVerseFinder\Data\BibleMetadata;
+use Statamic\Facades\GraphQL;
+use Statamic\Fields\Fieldtype;
 
 class BibleVerseFinder extends Fieldtype
 {
@@ -25,12 +25,12 @@ class BibleVerseFinder extends Fieldtype
     /**
      * Pre-process the data before it gets sent to the publish page
      *
-     * @param mixed $data
+     * @param  mixed  $data
      * @return array
      */
     public function preProcess($data)
     {
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             return [];
         }
 
@@ -54,30 +54,30 @@ class BibleVerseFinder extends Fieldtype
     /**
      * Process the data before it gets saved
      *
-     * @param mixed $data
+     * @param  mixed  $data
      * @return array
      */
     public function process($data)
     {
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             return [];
         }
 
         // Filter out empty entries
         return array_values(array_filter($data, function ($verse) {
-            return !empty($verse['text']) && !empty($verse['book']);
+            return ! empty($verse['text']) && ! empty($verse['book']);
         }));
     }
 
     /**
      * Augment the value for use in templates
      *
-     * @param mixed $value
+     * @param  mixed  $value
      * @return array
      */
     public function augment($value)
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return [];
         }
 
@@ -106,15 +106,13 @@ class BibleVerseFinder extends Fieldtype
                 'is_verse_range' => $startVerse !== null && $endVerse !== null && $startVerse !== $endVerse,
                 'fetched_at' => $verse['fetched_at'] ?? null,
                 'api_source' => $verse['api_source'] ?? null,
-                'has_text' => !empty($verse['text']),
+                'has_text' => ! empty($verse['text']),
             ];
         }, $value);
     }
 
     /**
      * Define the fieldtype config blueprint
-     *
-     * @return array
      */
     public function configFieldItems(): array
     {
@@ -173,6 +171,7 @@ class BibleVerseFinder extends Fieldtype
     protected function getVersionName(string $version): string
     {
         $versions = config('bible-verse-finder.versions', []);
+
         return $versions[$version] ?? $version;
     }
 

@@ -39,22 +39,22 @@ class TestBibleAPICommand extends Command
             $this->newLine();
 
             $data = $result['data'];
-            $this->line('Reference: ' . $data['reference']);
-            $this->line('Version: ' . $data['version']);
-            $this->line('API Source: ' . $data['api_source']);
+            $this->line('Reference: '.$data['reference']);
+            $this->line('Version: '.$data['version']);
+            $this->line('API Source: '.$data['api_source']);
             $this->newLine();
 
             $this->line('Text:');
             $this->comment($data['text']);
             $this->newLine();
 
-            $this->info('Fetched at: ' . $data['fetched_at']);
+            $this->info('Fetched at: '.$data['fetched_at']);
 
             return Command::SUCCESS;
         }
 
         $this->error('✗ API Request Failed');
-        $this->error('Error: ' . $result['error']);
+        $this->error('Error: '.$result['error']);
 
         return Command::FAILURE;
     }

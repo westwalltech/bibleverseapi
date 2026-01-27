@@ -2,16 +2,16 @@
 
 namespace NewSong\BibleVerseFinder;
 
-use Statamic\Providers\AddonServiceProvider;
-use Statamic\Facades\GraphQL;
-use Statamic\Facades\Permission;
-use NewSong\BibleVerseFinder\Fieldtypes\BibleVerseFinder;
-use NewSong\BibleVerseFinder\Console\Commands\TestBibleAPICommand;
+use NewSong\BibleVerseFinder\Console\Commands\ClearBibleCacheCommand;
 use NewSong\BibleVerseFinder\Console\Commands\DownloadBibleCommand;
 use NewSong\BibleVerseFinder\Console\Commands\ListBibleVersionsCommand;
-use NewSong\BibleVerseFinder\Console\Commands\ClearBibleCacheCommand;
+use NewSong\BibleVerseFinder\Console\Commands\TestBibleAPICommand;
+use NewSong\BibleVerseFinder\Fieldtypes\BibleVerseFinder;
 use NewSong\BibleVerseFinder\GraphQL\BibleVerseType;
 use NewSong\BibleVerseFinder\Support\Logger;
+use Statamic\Facades\GraphQL;
+use Statamic\Facades\Permission;
+use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -84,7 +84,7 @@ class ServiceProvider extends AddonServiceProvider
      */
     protected function registerLoggingChannel(): void
     {
-        if (!config('bible-verse-finder.logging.enabled', true)) {
+        if (! config('bible-verse-finder.logging.enabled', true)) {
             return;
         }
 
@@ -101,7 +101,7 @@ class ServiceProvider extends AddonServiceProvider
      */
     protected function validateProductionConfig(): void
     {
-        if (!$this->app->environment('production')) {
+        if (! $this->app->environment('production')) {
             return;
         }
 

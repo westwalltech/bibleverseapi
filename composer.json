@@ -18,6 +18,7 @@
         "amp",
         "graphql"
     ],
+    "homepage": "https://github.com/westwalltech/bibleverseapi",
     "authors": [
         {
             "name": "NewSong Church",
@@ -25,13 +26,18 @@
             "homepage": "https://newsongchurch.org"
         }
     ],
+    "support": {
+        "issues": "https://github.com/westwalltech/bibleverseapi/issues",
+        "source": "https://github.com/westwalltech/bibleverseapi"
+    },
     "require": {
         "php": "^8.3|^8.4|^8.5",
-        "statamic/cms": "^5.0|^6.0",
+        "statamic/cms": "^6.0",
         "guzzlehttp/guzzle": "^7.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^9.0",
+        "laravel/pint": "^1.18",
+        "orchestra/testbench": "^10.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0"
     },
@@ -53,7 +59,9 @@
     },
     "scripts": {
         "test": "pest",
-        "test-coverage": "pest --coverage"
+        "test:coverage": "pest --coverage",
+        "lint": "pint --test",
+        "lint:fix": "pint"
     },
     "extra": {
         "statamic": {
