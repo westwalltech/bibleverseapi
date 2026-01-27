@@ -135,7 +135,7 @@
                             variant="primary"
                             :disabled="!canFetch(verse) || verse.fetching"
                             :loading="verse.fetching"
-                            icon="arrows-counterclockwise"
+                            icon="sync"
                             :text="verse.fetching ? 'Fetching...' : 'Fetch Verse'"
                         />
                     </div>
@@ -148,7 +148,7 @@
                     <!-- Preview -->
                     <div v-if="verse.text && !verse.error" class="mt-4 p-4 bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50 dark:from-green-900/30 dark:via-emerald-900/30 dark:to-blue-900/30 border-2 border-green-400 dark:border-green-500 rounded-lg">
                         <div class="flex items-center gap-2 mb-3 pb-3 border-b-2 border-green-300 dark:border-green-500">
-                            <Icon name="check-circle" class="size-5 text-green-600 dark:text-green-400" />
+                            <Icon name="checkmark" class="size-5 text-green-600 dark:text-green-400" />
                             <span class="font-semibold text-gray-900 dark:text-gray-100">{{ verse.reference }}</span>
                             <span class="text-sm text-gray-600 dark:text-gray-300">({{ verse.version }})</span>
                         </div>
@@ -156,7 +156,7 @@
                             {{ verse.text }}
                         </div>
                         <div class="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
-                            <Icon name="clock" class="size-3 text-gray-400 dark:text-gray-500" />
+                            <Icon name="time-clock" class="size-3 text-gray-400 dark:text-gray-500" />
                             Fetched: {{ formatDate(verse.fetched_at) }}
                         </div>
                     </div>
@@ -165,7 +165,7 @@
 
             <!-- No verses message -->
             <div v-if="verses.length === 0" class="text-center py-8 text-gray-500 dark:text-dark-175 border-2 border-dashed border-gray-300 dark:border-dark-400 rounded">
-                <Icon name="book-open" class="size-12 mx-auto mb-2 text-gray-400 dark:text-dark-300" />
+                <Icon name="content-book-open" class="size-12 mx-auto mb-2 text-gray-400 dark:text-dark-300" />
                 <p>No verses added yet</p>
                 <p class="text-sm">Click "Add Verse" below to get started</p>
             </div>
@@ -184,7 +184,7 @@
                 @click="refreshAllVerses"
                 :disabled="refreshing"
                 :loading="refreshing"
-                icon="arrows-counterclockwise"
+                icon="sync"
                 :text="refreshing ? 'Refreshing...' : 'Refresh All'"
             />
         </div>
