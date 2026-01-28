@@ -17,6 +17,13 @@ A powerful Statamic addon that allows you to select Bible verses in the Control 
 - **Validation**: Prevents invalid chapter/verse selections
 - **Augmented Template Data**: Easy access in Antlers templates
 
+## Requirements
+
+- PHP 8.5+
+- Statamic 6.0+
+- Laravel 12+
+- Guzzle HTTP Client 7.0+
+
 ## Installation
 
 ### Via Composer (Recommended)

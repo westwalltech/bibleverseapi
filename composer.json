@@ -2,7 +2,7 @@
     "name": "newsong/bible-verse-finder",
     "description": "A Statamic addon for selecting and fetching Bible verses from multiple versions using external APIs",
     "type": "statamic-addon",
-    "version": "1.2.0",
+    "version": "2.0.0",
     "license": "MIT",
     "keywords": [
         "statamic",
@@ -31,7 +31,7 @@
         "source": "https://github.com/westwalltech/bibleverseapi"
     },
     "require": {
-        "php": "^8.3|^8.4|^8.5",
+        "php": "^8.5",
         "statamic/cms": "^6.0",
         "guzzlehttp/guzzle": "^7.0"
     },
