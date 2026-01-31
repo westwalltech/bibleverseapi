@@ -31,7 +31,7 @@
         "source": "https://github.com/westwalltech/bibleverseapi"
     },
     "require": {
-        "php": "^8.5",
+        "php": "^8.4",
         "statamic/cms": "^6.0",
         "guzzlehttp/guzzle": "^7.0"
     },
